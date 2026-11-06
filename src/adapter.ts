@@ -374,6 +374,10 @@ export function createWorkBuddyAdapter(options: WorkBuddyAdapterOptions): WorkBu
     streamIdleTimeoutMs: WORKBUDDY_STREAM_IDLE_TIMEOUT_MS,
     retryPolicy: options.retryPolicy ?? resolveRetryPolicy(undefined, 'dsh-workbuddy-connect retryPolicy'),
     configuredMaxTokens: new Map(),
+    // Required by dsh-llm-pi-ai 0.2.2-rc.1. Keep the established route limit;
+    // older adapters ignore these additive profile fields.
+    maxRequestImages: 50,
+    imageOffloadCountQuantum: 10,
     // Required since 0.1.5-alpha.2; the live catalog only exposes models that
     // probed successfully, so there is never a per-model failure to report.
     modelErrors: new Map(),

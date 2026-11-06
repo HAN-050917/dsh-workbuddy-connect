@@ -2,16 +2,6 @@
 
 English | [中文](./README.md)
 
-## Maintenance discontinued
-
-Starting October 20, 2026, WorkBuddy began restricting requests from unofficial clients. From a technical perspective, this kind of check is not difficult to get past. However, the model credits come with restrictions on where they can be used. WorkBuddy has made clear that it wants to distinguish its official client from third-party access, and this project respects that boundary and will not continue adapting to these checks. Using the official WorkBuddy client is, of course, the safest option.
-
-Due to limited personal time and energy, this project is no longer maintained, effective immediately. New feature requests and PRs will no longer be handled, and updates, compatibility fixes, and issue support will no longer be provided. The project repository is scheduled to go offline on **October 22, 2026 (Beijing time)**.
-
-Many thanks to everyone who used the plugin, shared feedback, and contributed, especially those who helped test, investigate problems, and submit PRs. It has been a pleasure to see this little plugin make things easier for you!
-
----
-
 Brings the models available in your signed-in WorkBuddy / WorkBuddy AI desktop app into [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness); the two versions each show their own model group and reuse their own account sign-in and credit.
 
 ## Install
@@ -23,7 +13,7 @@ Brings the models available in your signed-in WorkBuddy / WorkBuddy AI desktop a
 ```text
 Please install and verify the DSH (DeepSeek Harness) plugin dsh-workbuddy-connect for me (project: https://github.com/corrinehu/dsh-workbuddy-connect).
 Start by reading the project README and confirming which interface I actually use (Web / Desktop / TUI) and its DSH core version — for the Desktop app, the bundled core, never the standalone CLI's version.
-Then install from the official npm package per the version mapping (0.2.1-rc.2 -> 0.7.9, 0.2.1-rc.1 -> 0.7.7, 0.2.0-rc.2 -> 0.7.6, rc.1 -> 0.7.0, 0.1.5-0.1.7 -> 0.6.5), preferring a locally supported non-market channel; on some Desktop distributions (the official Electron app in particular) the profile is app-managed and rules vary by distribution — check mine first, then explore its compliant install route, but never bypass its validation.
+Then install from the official npm package per the version mapping (0.2.2-rc.1 and 0.2.1-rc.2+ -> 0.8.0; older cores use the historical versions below), preferring a locally supported non-market channel; on some Desktop distributions (the official Electron app in particular) the profile is app-managed and rules vary by distribution — check mine first, then explore its compliant install route, but never bypass its validation.
 Ask for my consent and make backups before changing any local files or configuration.
 After installing, verify the WorkBuddy group appears in the model picker and walk me through one short conversation.
 If the Desktop install still fails generation validation (e.g. the @types/retry false positive), report it honestly, reference upstream dataelement/dsh-desktop#688, and suggest switching to the standalone Web / TUI — do not modify dependency packages or bypass the check.
@@ -33,7 +23,9 @@ Core-to-plugin quick reference (full table in "Compatibility and release history
 
 | DSH core | Recommended plugin |
 |---|---|
-| 0.2.1-rc.2 | 0.7.9 (npm latest) |
+| 0.2.2-rc.1 | 0.8.0 (npm latest) |
+| 0.2.1-rc.2 and later 0.2.1 RCs | 0.8.0 |
+| 0.2.1-rc.2 (previous plugin) | 0.7.9 |
 | 0.2.1-rc.1 | 0.7.7 |
 | 0.2.0-rc.2 | 0.7.6 |
 | 0.2.0-rc.1 | 0.7.0 |
@@ -43,8 +35,8 @@ Core-to-plugin quick reference (full table in "Compatibility and release history
 <summary>Manual install (command line, Web / TUI only)</summary>
 
 ```sh
-# Web (pin per your actual core — example: 0.2.1-rc.2 -> 0.7.9; or install from source via github:corrinehu/dsh-workbuddy-connect)
-dsh plugin --profile web add dsh-workbuddy-connect@0.7.9
+# Web (for 0.2.2-rc.1 / 0.2.1-rc.2+)
+dsh plugin --profile web add dsh-workbuddy-connect@0.8.0
 dsh web
 
 # TUI (example for a 0.1.x core; that profile needs pnpm 11, e.g. npx pnpm@11)
@@ -147,16 +139,18 @@ llm-workbuddy:
 - **International-version environments not yet covered**: on Windows / WSL / Linux no reliable source for the international app's version has been located yet, so the saved value or the built-in default is used. On macOS, real-shim checks covered complete GPT-family replies, tool calls, and continued turns.
 - **Behaviour change with no credentials**: a version whose app was never signed in — and that left no plugin-owned copy — no longer shows a model group. The CN version used to display a built-in fallback list, but every model on it failed when selected.
 - **The enterprise credit path currently covers the CN product only**: the international enterprise billing interface is unverified, so those accounts still read through the personal endpoint pending measurement. The enterprise branch could not be tested locally (the development machine holds a personal account); it was implemented from the official app's interface contract, and reports from enterprise users are welcome.
-- **Settings entries vary with the DSH version**: older services use `installSection`; newer ones use SettingsForms. On DSH 0.2.1-rc.2, 0.7.9 restores the international edition's maximum-context switch, enabled by default. Turning it off uses the upstream default window, and the preference survives restarts. The switch appears only once this plugin's writable settings entry is ready; while waiting, the maximum window remains the default.
+- **Settings entries vary with the DSH version**: older services use `installSection`; newer ones use SettingsForms. Version 0.8.0 supports DSH 0.2.1-rc.2+ and 0.2.2-rc.1. On DSH 0.2.1-rc.2 it provides the international edition's maximum-context switch, enabled by default. Turning it off uses the upstream default window, and the preference survives restarts. The switch appears only once this plugin's writable settings entry is ready; while waiting, the maximum window remains the default.
 - Relies on WorkBuddy client interfaces (not a public API); the plugin may need updates as WorkBuddy changes.
 
 ## Compatibility and release history
 
-The plugin version must match the DSH core — a mismatched combination fails to start DSH — and the Desktop app picks its plugin version by the bundled core. The newest npm release is not necessarily right for you: match your actual core first.
+The plugin version must match the DSH core — a mismatched combination may prevent DSH from starting — and the Desktop app picks its plugin version by the bundled core. Version 0.8.0 supports DSH 0.2.1-rc.2 and later 0.2.1 RCs, plus 0.2.2-rc.1. Earlier cores still use their historical plugin releases. DSH 0.2.2-rc.1 requires Node.js 24.9 or later.
 
 | DSH core | Recommended plugin | Notes |
 |---|---|---|
-| `0.2.1-rc.2` | `0.7.9` | Targets this core only; `0.2.0-rc.2` and `0.2.1-rc.2` differ. Check the core bundled in your Desktop app. |
+| `0.2.2-rc.1` | `0.8.0` | Supports the newer DSH 0.2.2 API and Cordis 4.1. |
+| `0.2.1-rc.2` and later 0.2.1 RCs | `0.8.0` | Supports the DSH 0.2.1 service API. |
+| `0.2.1-rc.2` | `0.7.9` | Historical plugin release. |
 | `0.2.1-rc.1` | `0.7.7` | The core moved to `@earendil-works/pi-ai` 1.3.0, so the plugin bundles 1.3.0 too — a leftover 0.87.1 overrides entry must be removed (see the pi-ai note below). |
 | `0.2.0-rc.2` | `0.7.6` | Previous core line; fixes enterprise catalog gaps and international chat requests blocked by the upstream channel check. Avoid 0.7.2 with its registry regression. |
 | `0.2.0-rc.1` | `0.7.0` | 0.7.1 drops rc.1 support; stay on this version. |
@@ -165,6 +159,8 @@ The plugin version must match the DSH core — a mismatched combination fails to
 | `0.1.1-rc.2` | `0.2.6` | Older line, historical maintenance only. |
 
 Release history (full records at [releases](https://github.com/corrinehu/dsh-workbuddy-connect/releases)):
+
+- **0.8.0**: adds compatibility with DSH 0.2.2-rc.1 and DSH 0.2.1-rc.2+; updates Cordis and DSH build dependencies and supplies the new pi-ai provider profile image-count limits.
 
 - **0.7.9**: restores the international edition's maximum-context switch on DSH 0.2.1-rc.2, including delayed initialization and persistent settings (PR [#172](https://github.com/corrinehu/dsh-workbuddy-connect/pull/172), by @1Dreamer666); avoids fetch-blocked local ports that could cause international-edition 502 errors (PR [#164](https://github.com/corrinehu/dsh-workbuddy-connect/pull/164), by @Xiong-Ziyi); combines credit packages with the same name to reduce repeated entries.
 - **0.7.8**: adapts to DSH 0.2.1-rc.2; bundles the official atomic-write helper instead of relying on host module exposure; refreshes the China catalog snapshot and distinguishes Hy3 / Hy3-X; improves probe result labels and fixes the credit-refresh placement and tooltip. Thanks to @chenpiyanghappy for PR [#156](https://github.com/corrinehu/dsh-workbuddy-connect/pull/156).
@@ -178,7 +174,7 @@ Release history (full records at [releases](https://github.com/corrinehu/dsh-wor
 - **0.7.0**: adapts to DSH 0.2.0's settings-service rework and drops 0.1.x support.
 - **0.6.5**: final release of the 0.1.x line.
 
-Pinned-version install example: `dsh plugin --profile web add dsh-workbuddy-connect@0.7.9`.
+Pinned-version install example: `dsh plugin --profile web add dsh-workbuddy-connect@0.8.0`.
 
 **pi-ai versions are per core line and must not be mixed**: the 0.2.1-rc.1 / rc.2 core lines (plugin 0.7.7 / 0.7.8–0.7.9 respectively) moved to `@earendil-works/pi-ai` 1.3.0 (bundled by the plugin), so a profile-level leftover `overrides: {'@earendil-works/pi-ai': '0.87.1'}` **must be removed** or the plugin fails to load; the 0.2.0-rc.2 core line (plugin 0.7.6) still requires `^0.87.1` — on that line, **do not** upgrade the profile-level pi-ai to 1.x, and do not act on third-party plugin managers' "updatable" prompts, which do not check peer constraints ([#86](https://github.com/corrinehu/dsh-workbuddy-connect/issues/86)).
 

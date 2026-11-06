@@ -565,6 +565,7 @@ export function prepareChatBody(source: string): string {
   const obj = body as Record<string, unknown>
   obj['stream'] = true
   normalizeDeveloperRole(obj)
+  normalizeHarnessIdentity(obj)
   normalizeToolChoice(obj)
   return JSON.stringify(obj)
 }
@@ -577,6 +578,21 @@ function normalizeDeveloperRole(obj: Record<string, unknown>): void {
     if (typeof message !== 'object' || message === null || Array.isArray(message)) continue
     const wrapped = message as Record<string, unknown>
     if (wrapped['role'] === 'developer') wrapped['role'] = 'system'
+  }
+}
+
+const DSH_HARNESS_IDENTITY = 'You are an AI agent powered by DeepSeek Harness.'
+const WORKBUDDY_HARNESS_IDENTITY = 'You are an AI DeepSeek Harness agent running inside DeepSeek Harness.'
+
+/** Replace only DSH's fixed identity opener in WorkBuddy system messages. */
+function normalizeHarnessIdentity(obj: Record<string, unknown>): void {
+  const messages = obj['messages']
+  if (!Array.isArray(messages)) return
+  for (const message of messages) {
+    if (typeof message !== 'object' || message === null || Array.isArray(message)) continue
+    const wrapped = message as Record<string, unknown>
+    if (wrapped['role'] !== 'system' || typeof wrapped['content'] !== 'string') continue
+    wrapped['content'] = wrapped['content'].replace(DSH_HARNESS_IDENTITY, WORKBUDDY_HARNESS_IDENTITY)
   }
 }
 
